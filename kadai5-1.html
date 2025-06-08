@@ -14,21 +14,21 @@
     <script>
         async function zip_api(myForm) {
             const endpoint = "https://zipcloud.ibsnet.co.jp/api/search";
-            // ここにコードを書く
-            const response = await fetch(`${endpoint}?zipcode=${zipcode}`);
-const data = await response.json();
+            const zipcode = myForm.zipcode.value;
 
-if (data.results) {
-    const result = data.results[0];
-    document.getElementById("result").innerHTML = `
-        住所: ${result.address1} ${result.address2} ${result.address3}<br>
-        郵便番号: ${result.zipcode}
-    `;
-} else {
-    document.getElementById("result").innerHTML = "該当する住所が見つかりませんでした。";
-}
-            // zipcloudのAPI呼び出して結果を表示する
-            document.getElementById("result").innerHTML =  myForm.zipcode.value; // 現状ではそのまま表示しているだけ
+            try {
+                const response = await fetch(`${endpoint}?zipcode=${zipcode}`);
+                const data = await response.json();
+
+                if (data.results) {
+                    const address = data.results[0].address1 + data.results[0].address2 + data.results[0].address3;
+                    document.getElementById("result").innerHTML = `住所: ${address}`;
+                } else {
+                    document.getElementById("result").innerHTML = `エラー: ${data.message}`;
+                }
+            } catch (error) {
+                document.getElementById("result").innerHTML = `通信エラー: ${error}`;
+            }
         }
     </script>
 </body>
